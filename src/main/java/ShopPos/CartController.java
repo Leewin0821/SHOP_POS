@@ -2,8 +2,11 @@ package ShopPos;
 
 import Parsers.*;
 import Promotions.DiscountPromotion;
+import Promotions.Promotion;
 import Promotions.ReductionPromotion;
 import Promotions.SecondHalfPromotion;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,9 +22,10 @@ public class CartController {
     private static final String REDUCTIONLIST_PROMOTION_FILE_PATH = "reductionlist.txt";
     private static final String SECOND_HALF_PROMOTION_FILE_PATH = "second_half_price_promotion.txt";
 
-    DiscountPromotion discountPromotion = new DiscountPromotion();
-    SecondHalfPromotion secondHalfPromotion = new SecondHalfPromotion();
-    ReductionPromotion reductionPromotion = new ReductionPromotion();
+    Injector injector = Guice.createInjector();
+    DiscountPromotion discountPromotion = injector.getInstance(DiscountPromotion.class);
+    Promotion secondHalfPromotion = injector.getInstance(SecondHalfPromotion.class);
+    Promotion reductionPromotion = injector.getInstance(ReductionPromotion.class);
 
     private ArrayList<ShoppingItem> shoppingItems = new ArrayList<ShoppingItem>();
     private Cart cart;
