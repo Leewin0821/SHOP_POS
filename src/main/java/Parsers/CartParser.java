@@ -11,8 +11,8 @@ public class CartParser extends Parser {
 
     @Override
     protected Map.Entry<String, Integer> convert(String input) {
-        String name = null;
-        int quantity = 0;
+        String name;
+        int quantity;
         if (input.contains("-")) {
             String[] groups = input.split("-");
             name = groups[0];

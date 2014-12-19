@@ -23,9 +23,14 @@ public class CartController {
     private static final String SECOND_HALF_PROMOTION_FILE_PATH = "second_half_price_promotion.txt";
 
     Injector injector = Guice.createInjector();
-    DiscountPromotion discountPromotion = injector.getInstance(DiscountPromotion.class);
+    Promotion discountPromotion = injector.getInstance(DiscountPromotion.class);
     Promotion secondHalfPromotion = injector.getInstance(SecondHalfPromotion.class);
     Promotion reductionPromotion = injector.getInstance(ReductionPromotion.class);
+    Parser reductionParser = injector.getInstance(ReductionParser.class);
+    Parser itemListParser = injector.getInstance(ItemListParser.class);
+    Parser discountParser = injector.getInstance(DiscountParser.class);
+    Parser cartParser = injector.getInstance(CartParser.class);
+    Parser secondHalfParser = injector.getInstance(SecondHalfParser.class);
 
     private ArrayList<ShoppingItem> shoppingItems = new ArrayList<ShoppingItem>();
     private Cart cart;
@@ -62,7 +67,6 @@ public class CartController {
     }
 
     private void readFromReductionListFile() throws IOException {
-        Parser reductionParser = new ReductionParser();
         ArrayList<String> reductionList = reductionParser.parse(REDUCTIONLIST_PROMOTION_FILE_PATH);
         for (String name : reductionList) {
             setReductionPromotionToShoppingItem(name);
@@ -78,7 +82,6 @@ public class CartController {
     }
 
     private void readFromSecondHalfPromotionFile() throws IOException {
-        Parser secondHalfParser = new SecondHalfParser();
         ArrayList<String> secondHalfList = secondHalfParser.parse(SECOND_HALF_PROMOTION_FILE_PATH);
         for (String name : secondHalfList) {
             setSecondHalfPromotionToShoppingItem(name);
@@ -94,26 +97,25 @@ public class CartController {
     }
 
     private void readFromDiscountPromotionFile() throws IOException {
-        Parser discountParser = new DiscountParser();
         ArrayList<Map.Entry<String, Integer>> discountItemList =
                 discountParser.parse(DISCOUNT_PROMOTION_FILE_PATH);
         for (Map.Entry<String, Integer> entry : discountItemList) {
-            String name = entry.getKey();
-            discountPromotion.addDiscountItemAndDiscountRate(entry);
-            setDiscountPromotionToShoppingItem(name);
+            String itemName = entry.getKey();
+            Integer discountRate = entry.getValue();
+            setDiscountPromotionToShoppingItem(itemName , discountRate);
         }
     }
 
-    private void setDiscountPromotionToShoppingItem(String name) {
+    private void setDiscountPromotionToShoppingItem(String itemName , Integer discountRate) {
         for (ShoppingItem shoppingItem : shoppingItems) {
-            if (name.equals(shoppingItem.getGood().getName())) {
+            if (itemName.equals(shoppingItem.getGood().getName())) {
                 shoppingItem.setPromotion(discountPromotion);
+                shoppingItem.setDiscountRate(discountRate);
             }
         }
     }
 
     private void readFromCartFile() throws IOException {
-        Parser cartParser = new CartParser();
         ArrayList<Map.Entry<String, Integer>> cartList = cartParser.parse(CART_FILE_PATH);
         for (Map.Entry<String, Integer> entry : cartList) {
             String name = entry.getKey();
@@ -134,7 +136,6 @@ public class CartController {
     }
 
     private void readFromItemListFile() throws IOException {
-        Parser itemListParser = new ItemListParser();
         ArrayList<Good> itemList = itemListParser.parse(ITEMLIST_FILE_PATH);
         for (Good good : itemList) {
             shoppingItems.add(new ShoppingItem(good, 0));

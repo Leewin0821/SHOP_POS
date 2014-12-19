@@ -13,10 +13,12 @@ public class ShoppingItem {
     private int quantity;
     private Collection<Promotion> promotions;
     private double saleAmount;
+    private Integer discountRate;
 
     public ShoppingItem(Good good, int quantity) {
         this.good = good;
         this.quantity = quantity;
+        discountRate = 100;
         promotions = new ArrayList<Promotion>();
     }
 
@@ -74,4 +76,11 @@ public class ShoppingItem {
                 good.getPrice() + "   " + saleAmount + "\n";
     }
 
+    public Integer getDiscountRate() {
+        return discountRate;
+    }
+
+    public void setDiscountRate(Integer discountRate) {
+        this.discountRate = discountRate;
+    }
 }
