@@ -8,8 +8,15 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws IOException {
+        GoodsLoader goodsLoader = new GoodsLoader();
+        goodsLoader.loadGoods();
+
         Cart cart = new Cart();
-        CartController cartController = new CartController(cart);
-        cartController.purchase();
+
+        Customer customer = new Customer(cart);
+        customer.purchase();
+
+        Cashier cashier = new Cashier(cart);
+        cashier.checkOut();
     }
 }

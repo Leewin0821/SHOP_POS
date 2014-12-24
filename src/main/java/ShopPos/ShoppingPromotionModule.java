@@ -15,6 +15,7 @@ import com.google.inject.Binder;
 
 public class ShoppingPromotionModule extends AbstractModule {
     Binder binder;
+
     public void configure() {
 //add configuration logic here
         binder.bind(Promotion.class).to(DiscountPromotion.class);
