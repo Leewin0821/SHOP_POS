@@ -17,8 +17,6 @@ public class GoodsLoader {
     Injector injector = Guice.createInjector();
     Parser itemListParser = injector.getInstance(ItemListParser.class);
     GoodsShelf goodsShelf = GoodsShelf.getInstance();
-    public GoodsLoader() {
-    }
 
     public void loadGoods() throws IOException {
         ArrayList<Good> itemList = itemListParser.parse(ITEMLIST_FILE_PATH);

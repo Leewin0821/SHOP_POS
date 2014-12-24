@@ -22,9 +22,6 @@ public class Customer {
     private GoodsShelf goodsShelf = GoodsShelf.getInstance();
     private ArrayList<ShoppingItem> shoppingItems = goodsShelf.getShoppingItems();
 
-    public Customer(Cart cart) {
-        this.cart = cart;
-    }
 
     public void purchase() throws IOException {
 
@@ -52,4 +49,7 @@ public class Customer {
         }
     }
 
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
 }

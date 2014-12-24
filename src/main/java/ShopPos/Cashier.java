@@ -35,12 +35,8 @@ public class Cashier {
     private Cart cart;
     private ArrayList<ShoppingItem> shoppingItems;
 
-    public Cashier(Cart cart) {
-        this.cart = cart;
-        shoppingItems = cart.getShoppingItemList();
-    }
-
     public void checkOut() throws IOException {
+        shoppingItems = cart.getShoppingItemList();
         readFromSecondHalfPromotionFile();
         readFromDiscountPromotionFile();
         readFromReductionListFile();
@@ -106,5 +102,9 @@ public class Cashier {
                 shoppingItem.setDiscountRate(discountRate);
             }
         }
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 }

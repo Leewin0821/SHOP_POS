@@ -13,10 +13,12 @@ public class Main {
 
         Cart cart = new Cart();
 
-        Customer customer = new Customer(cart);
+        Customer customer = new Customer();
+        customer.setCart(cart);
         customer.purchase();
 
-        Cashier cashier = new Cashier(cart);
+        Cashier cashier = new Cashier();
+        cashier.setCart(cart);
         cashier.checkOut();
     }
 }
