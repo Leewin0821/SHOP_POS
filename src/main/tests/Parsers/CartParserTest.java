@@ -29,9 +29,6 @@ public class CartParserTest {
     @Test
     public void should_get_one_shoppingItem_entry_when_given_one_valid_data_line() throws Exception {
         String inputLine = "ITEM000001";
-        Map.Entry mockEntry = Mockito.mock(Map.Entry.class);
-        given(mockEntry.getKey()).willReturn("ITEM000001");
-        given(mockEntry.getValue()).willReturn(1);
 
         Map.Entry<String, Integer> convertEntry = cartParser.convert(inputLine);
 
@@ -42,9 +39,6 @@ public class CartParserTest {
     @Test
     public void should_get_correct_shoppingItem_quality_when_given_item_with_multiple_quality() throws Exception {
         String inputLine = "ITEM000001-2";
-        Map.Entry mockEntry = Mockito.mock(Map.Entry.class);
-        given(mockEntry.getKey()).willReturn("ITEM000001");
-        given(mockEntry.getValue()).willReturn(2);
 
         Map.Entry<String, Integer> convertEntry = cartParser.convert(inputLine);
 

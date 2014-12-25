@@ -24,11 +24,10 @@ public class ItemListParserTest {
     @Test
     public void should_get_correct_good_when_given_valid_data_line() throws Exception {
         String inputLine = "ITEM000001:40";
-        Good expectedGood = new Good("ITEM000001", 40);
 
         Good convertedGood = itemListParser.convert(inputLine);
 
-        assertThat(convertedGood.getName(), is(expectedGood.getName()));
-        assertThat(convertedGood.getPrice(), is(expectedGood.getPrice()));
+        assertThat(convertedGood.getName(), is("ITEM000001"));
+        assertThat(convertedGood.getPrice(), is(40.0));
     }
 }
