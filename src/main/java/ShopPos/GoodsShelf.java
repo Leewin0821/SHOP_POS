@@ -9,9 +9,6 @@ public class GoodsShelf {
     private static GoodsShelf goodShelfInstance = new GoodsShelf();
     private ArrayList<ShoppingItem> shoppingItems = new ArrayList<ShoppingItem>();
 
-    private GoodsShelf() {
-    }
-
     public static GoodsShelf getInstance() {
         return goodShelfInstance;
     }

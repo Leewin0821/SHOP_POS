@@ -20,6 +20,7 @@ public class ShoppingItem {
         this.quantity = quantity;
         discountRate = 100;
         promotions = new ArrayList<Promotion>();
+        setInitialSaleAmount();
     }
 
     public Good getGood() {

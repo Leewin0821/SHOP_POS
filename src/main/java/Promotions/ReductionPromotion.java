@@ -8,14 +8,6 @@ import ShopPos.ShoppingItem;
 public class ReductionPromotion extends Promotion {
     private double reductionAmount = 5;
 
-    public double getReductionAmount() {
-        return reductionAmount;
-    }
-
-    public void setReductionAmount(double reductionAmount) {
-        this.reductionAmount = reductionAmount;
-    }
-
     @Override
     protected void doPromote(ShoppingItem shoppingItem) {
         if (shoppingItem.hasPromotion(this)) {
