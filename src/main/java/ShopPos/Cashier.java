@@ -13,35 +13,44 @@ import com.google.inject.Injector;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import static com.sun.tools.javac.util.List.from;
 
 /**
  * Created by lwzhang on 12/24/14.
  */
 public class Cashier {
-    private static final String DISCOUNT_PROMOTION_FILE_PATH = "discount_promotion.txt";
-    private static final String REDUCTIONLIST_PROMOTION_FILE_PATH = "reductionlist.txt";
-    private static final String SECOND_HALF_PROMOTION_FILE_PATH = "second_half_price_promotion.txt";
+    private static final String DISCOUNT_PROMOTION_FILE_NAME = "discount_promotion.txt";
+    private static final String REDUCTIONLIST_PROMOTION_FILE_NAME = "reductionlist.txt";
+    private static final String SECOND_HALF_PROMOTION_FILE_NAME = "second_half_price_promotion.txt";
+
+    private Parser reductionParser;
+    private Parser secondHalfParser;
+    private Parser discountParser;
 
     Injector injector = Guice.createInjector();
     Promotion discountPromotion = injector.getInstance(DiscountPromotion.class);
-    Promotion secondHalfPromotion = injector.getInstance(SecondHalfPromotion.class);
     Promotion reductionPromotion = injector.getInstance(ReductionPromotion.class);
+    Promotion secondHalfPromotion = injector.getInstance(SecondHalfPromotion.class);
 
-    Parser reductionParser = injector.getInstance(ReductionParser.class);
-    Parser secondHalfParser = injector.getInstance(SecondHalfParser.class);
-    Parser discountParser = injector.getInstance(DiscountParser.class);
+    public Cashier()
+    {
+        setReductionParser(injector.getInstance(ReductionParser.class));
+        setSecondHalfParser(injector.getInstance(SecondHalfParser.class));
+        setDiscountParser(injector.getInstance(DiscountParser.class));
+    }
 
     private Cart cart;
-    private ArrayList<ShoppingItem> shoppingItems;
+    private List<ShoppingItem> shoppingItems;
 
     public void checkOut() throws IOException {
         shoppingItems = cart.getShoppingItemList();
-        readFromSecondHalfPromotionFile();
-        readFromDiscountPromotionFile();
-        readFromReductionListFile();
+        readSecondHalfPromotionFromTextFile(SECOND_HALF_PROMOTION_FILE_NAME);
+        readDiscountPromotionFromTextFile(DISCOUNT_PROMOTION_FILE_NAME);
+        readReductionPromotionFromTextFile(REDUCTIONLIST_PROMOTION_FILE_NAME);
         assemblePromotionChain();
-
 
         System.out.println(shoppingItems);
         System.out.println(cart.getTotalSaleAmountWithoutPromotion());
@@ -55,14 +64,15 @@ public class Cashier {
         secondHalfPromotion.getAmount(cart);
     }
 
-    private void readFromReductionListFile() throws IOException {
-        ArrayList<String> reductionList = reductionParser.parse(REDUCTIONLIST_PROMOTION_FILE_PATH);
+    private void readReductionPromotionFromTextFile(String fileName) throws IOException {
+        ArrayList<String> reductionList = reductionParser.parse(fileName);
         for (String name : reductionList) {
             setReductionPromotionToShoppingItem(name);
         }
     }
 
     private void setReductionPromotionToShoppingItem(String name) {
+
         for (ShoppingItem shoppingItem : shoppingItems) {
             if (name.equals(shoppingItem.getGood().getName())) {
                 shoppingItem.setPromotion(reductionPromotion);
@@ -70,8 +80,8 @@ public class Cashier {
         }
     }
 
-    private void readFromSecondHalfPromotionFile() throws IOException {
-        ArrayList<String> secondHalfList = secondHalfParser.parse(SECOND_HALF_PROMOTION_FILE_PATH);
+    private void readSecondHalfPromotionFromTextFile(String fileName) throws IOException {
+        ArrayList<String> secondHalfList = secondHalfParser.parse(fileName);
         for (String name : secondHalfList) {
             setSecondHalfPromotionToShoppingItem(name);
         }
@@ -85,9 +95,9 @@ public class Cashier {
         }
     }
 
-    private void readFromDiscountPromotionFile() throws IOException {
+    private void readDiscountPromotionFromTextFile(String fileName) throws IOException {
         ArrayList<Map.Entry<String, Integer>> discountItemList =
-                discountParser.parse(DISCOUNT_PROMOTION_FILE_PATH);
+                discountParser.parse(fileName);
         for (Map.Entry<String, Integer> entry : discountItemList) {
             String itemName = entry.getKey();
             Integer discountRate = entry.getValue();
@@ -106,5 +116,17 @@ public class Cashier {
 
     public void setCart(Cart cart) {
         this.cart = cart;
+    }
+
+    public void setReductionParser(Parser reductionParser) {
+        this.reductionParser = reductionParser;
+    }
+
+    public void setSecondHalfParser(Parser secondHalfParser) {
+        this.secondHalfParser = secondHalfParser;
+    }
+
+    public void setDiscountParser(Parser discountParser) {
+        this.discountParser = discountParser;
     }
 }
