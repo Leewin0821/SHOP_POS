@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.sun.tools.javac.util.List.from;
-
 /**
  * Created by lwzhang on 12/24/14.
  */
@@ -25,25 +23,21 @@ public class Cashier {
     private static final String DISCOUNT_PROMOTION_FILE_NAME = "discount_promotion.txt";
     private static final String REDUCTIONLIST_PROMOTION_FILE_NAME = "reductionlist.txt";
     private static final String SECOND_HALF_PROMOTION_FILE_NAME = "second_half_price_promotion.txt";
-
-    private Parser reductionParser;
-    private Parser secondHalfParser;
-    private Parser discountParser;
-
     Injector injector = Guice.createInjector();
     Promotion discountPromotion = injector.getInstance(DiscountPromotion.class);
     Promotion reductionPromotion = injector.getInstance(ReductionPromotion.class);
     Promotion secondHalfPromotion = injector.getInstance(SecondHalfPromotion.class);
+    private Parser reductionParser;
+    private Parser secondHalfParser;
+    private Parser discountParser;
+    private Cart cart;
+    private List<ShoppingItem> shoppingItems;
 
-    public Cashier()
-    {
+    public Cashier() {
         setReductionParser(injector.getInstance(ReductionParser.class));
         setSecondHalfParser(injector.getInstance(SecondHalfParser.class));
         setDiscountParser(injector.getInstance(DiscountParser.class));
     }
-
-    private Cart cart;
-    private List<ShoppingItem> shoppingItems;
 
     public void checkOut() throws IOException {
         shoppingItems = cart.getShoppingItemList();
@@ -57,7 +51,6 @@ public class Cashier {
         System.out.println(cart.getTotalSaleAmountWithPromotion());
     }
 
-
     private void assemblePromotionChain() {
         secondHalfPromotion.setSuccessor(discountPromotion);
         discountPromotion.setSuccessor(reductionPromotion);
@@ -66,33 +59,25 @@ public class Cashier {
 
     private void readReductionPromotionFromTextFile(String fileName) throws IOException {
         ArrayList<String> reductionList = reductionParser.parse(fileName);
-        for (String name : reductionList) {
-            setReductionPromotionToShoppingItem(name);
-        }
+        reductionList.forEach(this::setReductionPromotionToShoppingItem);
     }
 
     private void setReductionPromotionToShoppingItem(String name) {
 
-        for (ShoppingItem shoppingItem : shoppingItems) {
-            if (name.equals(shoppingItem.getGood().getName())) {
-                shoppingItem.setPromotion(reductionPromotion);
-            }
-        }
+        shoppingItems.stream().filter(shoppingItem -> name.equals(shoppingItem.getGood().getName())).forEach(shoppingItem -> {
+            shoppingItem.setPromotion(reductionPromotion);
+        });
     }
 
     private void readSecondHalfPromotionFromTextFile(String fileName) throws IOException {
         ArrayList<String> secondHalfList = secondHalfParser.parse(fileName);
-        for (String name : secondHalfList) {
-            setSecondHalfPromotionToShoppingItem(name);
-        }
+        secondHalfList.forEach(this::setSecondHalfPromotionToShoppingItem);
     }
 
     private void setSecondHalfPromotionToShoppingItem(String name) {
-        for (ShoppingItem shoppingItem : shoppingItems) {
-            if (name.equals(shoppingItem.getGood().getName())) {
-                shoppingItem.setPromotion(secondHalfPromotion);
-            }
-        }
+        shoppingItems.stream().filter(shoppingItem -> name.equals(shoppingItem.getGood().getName())).forEach(shoppingItem -> {
+            shoppingItem.setPromotion(secondHalfPromotion);
+        });
     }
 
     private void readDiscountPromotionFromTextFile(String fileName) throws IOException {
@@ -106,12 +91,10 @@ public class Cashier {
     }
 
     private void setDiscountPromotionToShoppingItem(String itemName, Integer discountRate) {
-        for (ShoppingItem shoppingItem : shoppingItems) {
-            if (itemName.equals(shoppingItem.getGood().getName())) {
-                shoppingItem.setPromotion(discountPromotion);
-                shoppingItem.setDiscountRate(discountRate);
-            }
-        }
+        shoppingItems.stream().filter(shoppingItem -> itemName.equals(shoppingItem.getGood().getName())).forEach(shoppingItem -> {
+            shoppingItem.setPromotion(discountPromotion);
+            shoppingItem.setDiscountRate(discountRate);
+        });
     }
 
     public void setCart(Cart cart) {

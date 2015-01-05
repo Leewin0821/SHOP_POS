@@ -21,9 +21,7 @@ public abstract class Promotion {
 
     public void getAmount(Cart cart) {
         ArrayList<ShoppingItem> shoppingItems = cart.getShoppingItemList();
-        for (ShoppingItem shoppingItem : shoppingItems) {
-            doPromote(shoppingItem);
-        }
+        shoppingItems.forEach(this::doPromote);
         if (getSuccessor() != null) {
             getSuccessor().getAmount(cart);
         }
